@@ -1,6 +1,18 @@
 import os
+import pathlib
 from functools import reduce
 
+def get_all_files(root: pathlib.Path, recursive=False):
+    files = []
+    for item in root.iterdir():
+        if item.is_file():
+            files.append(item)
+        elif item.is_dir():
+            if recursive:
+                files.extend(get_all_files(item))
+        else:
+            raise 'Unknown type: {item}'
+    return files
 
 def argmin(a):
     return min(range(len(a)), key=a.__getitem__)
