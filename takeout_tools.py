@@ -27,10 +27,10 @@ def is_matched_stem(partial_stem, full_stem):
 
 # use require_ext to check target extension (for example, image.jpg, image.png and image.mp4)
 def is_matched_pair(media_info, metadata, require_ext=False):
+    is_matched = is_matched_stem(media_info['target_stem'], metadata['target_stem'])
     if require_ext and metadata['target_ext'] != '':
-        return media_info['target_ext'] == metadata['target_ext'] and is_matched_stem(media_info['target_stem'],
-                                                                                      metadata['target_stem'])
-    return is_matched_stem(media_info['target_stem'], metadata['target_stem'])
+        return media_info['target_ext'] == metadata['target_ext'] and is_matched
+    return is_matched
 
 
 # use this to handle xxx-COLLAGE.jpg
@@ -129,10 +129,10 @@ def get_single_folder(folder_path: pathlib.Path):
     metadata_files = list(filter(lambda x: x.suffix == '.json', all_files))
 
     metadata_dicts = [
-        obj
+        d
         for f in metadata_files
         if is_media_metadata(
-            obj := load_metadata_dict(f)
+            d := load_metadata_dict(f)
         )
     ]
     print(f'Metadata files: {len(metadata_files)}, '
