@@ -1,21 +1,10 @@
 import json
 import os
 import pathlib
-import re
 from dataclasses import dataclass
 from itertools import compress
 
-from utils import get_all_files, argmax
-
-
-def get_suffix_number(text):
-    pattern = r'(\(\d+\))$'
-    match = re.search(pattern, text.strip())
-
-    if match:
-        return int(match.group(1).removeprefix('(').removesuffix(')'))
-    else:
-        return None
+from utils import get_all_files, argmax, get_suffix_number
 
 
 # fuzzy match media stem name
