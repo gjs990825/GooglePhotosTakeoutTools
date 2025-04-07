@@ -1,6 +1,8 @@
 import os
 import pathlib
 import re
+import time
+from datetime import datetime
 from functools import reduce
 
 
@@ -54,3 +56,17 @@ def get_suffix_number(text):
         return int(match.group(1).removeprefix('(').removesuffix(')'))
     else:
         return None
+
+
+
+def get_geolocations_from_metadata(metadata: dict):
+    return tuple(
+        metadata['geoData'][name]
+        for name in ('latitude', 'longitude', 'altitude')
+    )
+
+
+def modify_file_creation_time(file_path, timestamp: int):
+    date = datetime.fromtimestamp(timestamp)
+    t = time.mktime(date.timetuple())
+    os.utime(file_path, (t, t))

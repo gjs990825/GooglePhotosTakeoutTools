@@ -6,6 +6,8 @@ from decimal import Decimal
 
 import piexif
 
+from takeout_tools.hanlder import MediaHandler
+
 ALTITUDE_FLOAT_DIGITS = 2
 POSITION_FLOAT_DIGITS = 6
 
@@ -77,7 +79,7 @@ def merge_exif(
     if remove_thumbnail and 'thumbnail' in exif_dict:
         del exif_dict['thumbnail']
 
-    if altitude != 0 and latitude != 0:
+    if latitude != 0 and longitude != 0:
         gps_dict = make_gps_dict(altitude, latitude, longitude)
         original_gps = exif_dict['GPS']
 
@@ -96,32 +98,32 @@ def merge_exif(
     return cp
 
 
-def merge_exif_for_image(
-        from_file: pathlib.Path,
-        target_file: pathlib.Path,
-        timestamp,
-        latitude,
-        longitude,
-        altitude,
-        **options,
-):
-    exif_dict = piexif.load(from_file.as_posix())
-    merged_exif_dict = merge_exif(
-        exif_dict,
-        timestamp,
-        latitude,
-        longitude,
-        altitude,
-        **options
-    )
+class PiexifHandler(MediaHandler):
+    @staticmethod
+    def supports(extension: str) -> bool:
+        return is_piexif_supported(extension)
 
-    # copy and insert exif
-    shutil.copy2(from_file, target_file)
+    @staticmethod
+    def merge_metadata_for_media(
+            from_file: pathlib.Path,
+            target_file: pathlib.Path,
+            timestamp: int,
+            latitude: float,
+            longitude: float,
+            altitude: float,
+            **options
+    ):
+        exif_dict = piexif.load(from_file.as_posix())
+        merged_exif_dict = merge_exif(
+            exif_dict,
+            timestamp,
+            latitude,
+            longitude,
+            altitude,
+            **options
+        )
 
-    try:
+        # copy and insert exif
+        shutil.copy2(from_file, target_file)
         exif_bytes = piexif.dump(merged_exif_dict)
-    except Exception as e:
-        print(merged_exif_dict)
-        raise e
-
-    piexif.insert(exif_bytes, target_file.as_posix())
+        piexif.insert(exif_bytes, target_file.as_posix())

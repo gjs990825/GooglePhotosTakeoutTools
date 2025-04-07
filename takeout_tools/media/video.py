@@ -1,5 +1,9 @@
+import os
 import pathlib
+import shutil
 import subprocess
+
+from takeout_tools.hanlder import MediaHandler
 
 
 def is_ffmpeg_supported(ext):
@@ -50,3 +54,31 @@ def merge_geolocation_for_video(
         target_file,
         to_iso6709(latitude, longitude, altitude)
     )
+
+
+class FFmpegHandler(MediaHandler):
+    @staticmethod
+    def supports(extension: str) -> bool:
+        return is_ffmpeg_supported(extension)
+
+    @staticmethod
+    def merge_metadata_for_media(
+            from_file: pathlib.Path,
+            target_file: pathlib.Path,
+            timestamp: int,
+            latitude: float,
+            longitude: float,
+            altitude: float,
+            **options
+    ):
+        _ = timestamp
+
+        if latitude != 0 and longitude != 0:
+            target_file.unlink(missing_ok=True)
+            add_geolocation_to_video(
+                from_file,
+                target_file,
+                to_iso6709(latitude, longitude, altitude)
+            )
+        else:
+            shutil.copy2(from_file, target_file)

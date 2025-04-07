@@ -4,7 +4,7 @@ import pathlib
 from dataclasses import dataclass
 from itertools import compress
 
-from utils import get_all_files, argmax, get_suffix_number
+from .utils import get_all_files, argmax, get_suffix_number
 
 
 # fuzzy match media stem name
