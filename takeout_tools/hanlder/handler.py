@@ -42,6 +42,25 @@ class MediaHandler(ABC, metaclass=MediaHandlerMeta):
         return MediaHandler.handler_for_extension(from_file.suffix, allow_fallback)
 
     @staticmethod
+    def auto(
+            media_info: dict,
+            metadata: dict,
+            *,
+            target_file: pathlib.Path = None,
+            target_folder: pathlib.Path = None,
+            allow_fallback=False
+    ):
+        handler = MediaHandler.handler_for_media(media_info, allow_fallback=allow_fallback)
+        print(f'Found handler {handler} for file {media_info["media_path"]}')
+
+        handler.merge_from_metadata(
+            media_info,
+            metadata,
+            target_file=target_file,
+            target_folder=target_folder,
+        )
+
+    @staticmethod
     @abstractmethod
     def supports(extension: str) -> bool:
         pass

@@ -6,7 +6,7 @@ from takeout_tools.hanlder import MediaHandler
 
 
 def is_ffmpeg_supported(ext):
-    return ext in ('.mp4', '.mov')
+    return ext in ('.mp4', '.mov', '.3gp')
 
 
 def add_geolocation_to_video(input_file, output_file, loc_iso_6709: str):

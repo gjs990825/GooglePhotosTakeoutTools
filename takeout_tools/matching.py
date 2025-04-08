@@ -140,17 +140,19 @@ def pair_single_folder(folder_path: pathlib.Path, ignore_errors=False, compare_e
     unmatched_media = []
 
     for media_info in media_infos:
+        print('Paring media: {}'.format(media_info['media_path']))
+
         candidates = []
         for meta_idx, metadata in enumerate(metadata_dicts):
             if is_matched_pair(media_info, metadata, require_ext=compare_ext_name):  # matched name
                 if metadata['meta_duplicated_number'] == media_info['media_duplicated_number']:
-                    print(f'matched {metadata}')
+                    print('found candidate: {}'.format(metadata['metadata_path']))
                     candidates.append(meta_idx)
                 else:
-                    print(f'found but not matched {metadata}')
+                    print('found but not matched: {}'.format(metadata['metadata_path']))
 
         if not candidates:  # no candidates
-            print(f'{media_info["target_stem"]} has no matched metadata')
+            print(f'{media_info["media_path"]} has no matched metadata')
             unmatched_media.append(media_info)
         else:  # find best candidate
             similarities = [
@@ -162,7 +164,7 @@ def pair_single_folder(folder_path: pathlib.Path, ignore_errors=False, compare_e
             ]
             best_idx = argmax(similarities)
             matched_lists[candidates[best_idx]].append(media_info)
-            print(candidates, similarities, best_idx)
+            print('candidates: {}, similarities: {}, best_idx: {}'.format(candidates, similarities, best_idx))
 
     matched_length_list = [len(x) for x in matched_lists]
     unmatched_metadata = list(compress(metadata_dicts, [x == 0 for x in matched_length_list]))
@@ -178,6 +180,7 @@ def pair_single_folder(folder_path: pathlib.Path, ignore_errors=False, compare_e
     paired = [
         (metadata, matched_media)
         for metadata, matched_media in zip(metadata_dicts, matched_lists)
+        if len(matched_media) > 0  # skip empty metadata
     ]
 
     return paired, unmatched_media, unmatched_metadata
