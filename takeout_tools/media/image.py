@@ -127,3 +127,5 @@ class PiexifHandler(MediaHandler):
         shutil.copy2(from_file, target_file)
         exif_bytes = piexif.dump(merged_exif_dict)
         piexif.insert(exif_bytes, target_file.as_posix())
+
+        return target_file

@@ -1,4 +1,3 @@
-import os
 import pathlib
 import shutil
 import subprocess
@@ -82,3 +81,5 @@ class FFmpegHandler(MediaHandler):
             )
         else:
             shutil.copy2(from_file, target_file)
+
+        return target_file
