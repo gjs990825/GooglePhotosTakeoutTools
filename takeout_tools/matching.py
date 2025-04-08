@@ -165,7 +165,7 @@ def pair_single_folder(folder_path: pathlib.Path, ignore_errors=False, compare_e
             print(candidates, similarities, best_idx)
 
     matched_length_list = [len(x) for x in matched_lists]
-    unmatched_metadata = list(compress(media_infos, [x == 0 for x in matched_length_list]))
+    unmatched_metadata = list(compress(metadata_dicts, [x == 0 for x in matched_length_list]))
 
     print(f'Overall matched media {sum(matched_length_list)}, total media {len(media_infos)}')
     print(f'Not matched media: {unmatched_media}')
